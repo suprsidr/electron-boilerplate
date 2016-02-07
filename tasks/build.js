@@ -16,7 +16,6 @@ var destDir = projectDir.cwd('./build');
 
 var paths = {
     copyFromAppDir: [
-        './node_modules/**',
         './vendor/**',
         './**/*.html',
         './**/*.+(jpg|png|svg)'
@@ -33,6 +32,13 @@ gulp.task('clean', function (callback) {
 
 
 var copyTask = function () {
+    if (utils.getEnvName() !== 'production') {
+        projectDir.symlink('../app/assets', destDir.path('assets'));
+        projectDir.symlink('../app/node_modules', destDir.path('node_modules'));
+    } else {
+        paths.copyFromAppDir.push('./assets/**');
+        paths.copyFromAppDir.push('./node_modules/**');
+    }
     return projectDir.copyAsync('app', destDir.path(), {
         overwrite: true,
         matching: paths.copyFromAppDir
